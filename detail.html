@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品分类 - 季佳铭 | 新媒体视觉设计师</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Source Han Sans CN', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            padding: 20px 0;
+        }
+        
+        .navbar.scrolled {
+            background: rgba(248, 249, 250, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: #6c757d;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        .nav-menu li a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-menu li a:hover {
+            color: #6c757d;
+        }
+        
+        .nav-menu li a.active {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+        
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* 分类标题区 */
+        .category-header {
+            padding: 120px 0 60px;
+        }
+        
+        .category-title {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .filter-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .filter-tag {
+            padding: 8px 16px;
+            background-color: #e9ecef;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-tag:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .filter-tag.active {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        /* 作品网格 - 基础布局 - 从左到右排列 */
+        .works-grid {
+            display: none;
+            flex-wrap: wrap;
+            gap: 32px;
+            margin-bottom: 80px;
+            padding: 0 60px;
+            position: relative;
+            max-width: 1300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .works-grid.active {
+            display: flex;
+        }
+        
+        .works-grid.collapsed {
+            overflow: hidden;
+            max-height: 480px;
+        }
+        
+        /* 平面作品 - 3:4 竖屏卡片，3列布局，显示1行 */
+        #graphic-works.collapsed {
+            max-height: 480px;
+        }
+
+        /* UI作品 - 手机样机 9:16，3列布局，显示1行 */
+        #ui-works.collapsed {
+            max-height: 480px;
+        }
+
+        /* 网站作品 - 电脑样机 16:10，2列布局，显示1行 */
+        #web-works.collapsed {
+            max-height: 480px;
+        }
+
+        /* 视频作品 - 16:9 宽屏，2列布局，显示1行 */
+        #video-works.collapsed {
+            max-height: 480px;
+        }
+        
+        /* 渐变遮挡层 - 基础样式 */
+        .gradient-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to bottom, transparent 15%, rgba(245, 247, 250, 0.7) 50%, rgba(245, 247, 250, 0.95) 80%, rgba(245, 247, 250, 1) 100%);
+            pointer-events: none;
+            z-index: 10;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .gradient-overlay.hidden {
+            opacity: 0;
+        }
+        
+        /* 更多按钮容器 */
+        .show-more-container {
+            position: relative;
+            display: none;
+            justify-content: flex-end;
+            margin-top: -80px;
+            margin-right: 40px;
+            margin-bottom: 40px;
+            z-index: 20;
+        }
+        
+        .show-more-container.active {
+            display: flex;
+        }
+        
+        .show-more-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(108, 117, 141, 0.3);
+        }
+        
+        .show-more-btn:hover {
+            background-color: #495057;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 141, 0.4);
+        }
+        
+        .show-more-btn.collapsed {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+        
+        .show-more-btn.collapsed:hover {
+            background-color: #dee2e6;
+        }
+        
+        /* 动态箭头 */
+        .arrow-icon {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+            animation: bounce 1.5s infinite;
+        }
+        
+        .show-more-btn.collapsed .arrow-icon {
+            transform: rotate(180deg);
+            animation: none;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(4px);
+            }
+        }
+        
+        .work-card {
+            flex-shrink: 0;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease-out;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .work-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .work-card img {
+            width: 100%;
+            display: block;
+            transition: all 0.3s ease-out;
+        }
+
+        .work-card:hover img {
+            transform: scale(1.02);
+        }
+
+        /* 平面设计卡片 - 一行3个 */
+        .graphic-card {
+            width: calc((100% - 64px) / 3);
+        }
+
+        /* UI卡片 - 一行3个 */
+        .ui-card {
+            width: calc((100% - 64px) / 3);
+        }
+
+        /* 网站卡片 - 一行2个 */
+        .web-card {
+            width: calc((100% - 32px) / 2);
+        }
+
+        /* 视频卡片 - 一行2个 */
+        .video-card {
+            width: calc((100% - 32px) / 2);
+        }
+        
+        .work-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+            color: white;
+            padding: 30px 20px 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            text-align: center;
+        }
+        
+        .work-card:hover .work-overlay {
+            transform: translateY(0);
+        }
+        
+        .work-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        /* 平面设计卡片 3:4 */
+        .graphic-card img {
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            object-position: top center;
+        }
+        
+        /* UI手机样机卡片 */
+        .phone-mockup {
+            background-color: #1a1a1a;
+            border-radius: 30px;
+            padding: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .phone-mockup img {
+            width: 100%;
+            aspect-ratio: 9/16;
+            object-fit: contain;
+            border-radius: 20px;
+        }
+        
+        /* 网站电脑样机卡片 */
+        .computer-mockup {
+            background-color: #2d2d2d;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .computer-mockup img {
+            width: 100%;
+            aspect-ratio: 16/10;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        
+        /* 视频卡片 */
+        .video-card {
+            position: relative;
+        }
+        
+        .video-card img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+        
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .video-card:hover .play-button {
+            transform: translate(-50%, -50%) scale(1.1);
+            background-color: white;
+        }
+        
+        /* 页脚 */
+        .footer {
+            padding: 100px 0;
+            background-color: #f8f9fa;
+        }
+        
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+        
+        .footer-left {
+            flex: 1;
+        }
+        
+        .footer-right {
+            flex: 1;
+            text-align: right;
+        }
+        
+        .footer-left h3,
+        .footer-right h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .contact-info span {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .footer-right a {
+            color: #6c757d;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-right a:hover {
+            color: #6c757d;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+        }
+        
+        .social-links a {
+            font-size: 20px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid #dee2e6;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 滚动动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.5s ease-out;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .graphic-card,
+            .ui-card {
+                width: calc((100% - 32px) / 2);
+            }
+            .web-card,
+            .video-card {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                align-items: center;
+                padding: 30px 0;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .nav-menu.active {
+                transform: translateY(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .category-title {
+                font-size: 24px;
+            }
+
+            .graphic-card,
+            .ui-card,
+            .web-card,
+            .video-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="logo">
+                个人作品集 <span>2026</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="detail.html" class="active">作品集</a></li>
+                <li><a href="about.html">关于我</a></li>
+                <li><a href="contact.html">联系方式</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger">
+                ☰
+            </button>
+        </div>
+    </nav>
+
+    <!-- 分类标题区 -->
+    <section class="category-header">
+        <div class="container">
+            <div class="category-content" style="flex-direction: column; align-items: center;">
+                <div class="category-info" style="text-align: center; width: 100%;">
+                    <h1 class="category-title fade-in">作品分类</h1>
+                </div>
+                <div class="filter-tags fade-in" style="justify-content: center; margin-top: 20px;">
+                    <span class="filter-tag active" data-category="graphic">平面作品</span>
+                    <span class="filter-tag" data-category="ui">UI作品</span>
+                    <span class="filter-tag" data-category="web">网站作品</span>
+                    <span class="filter-tag" data-category="video">视频作品</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品网格 -->
+    <section class="works-section">
+        <div class="container">
+            <!-- 平面作品 -->
+            <div class="works-grid active collapsed" id="graphic-works">
+                <div class="gradient-overlay"></div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_1.webp" alt="平面设计作品1" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">剪日常赢好礼</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_2.webp" alt="平面设计作品2" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">创作星计划</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_3.webp" alt="平面设计作品3" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">女装品牌海报</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_4.webp" alt="平面设计作品4" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">植萃护肤品海报</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_5.webp" alt="平面设计作品5" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">西瓜汁产品海报</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_6.webp" alt="平面设计作品6" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">鲜奶产品海报</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_7.webp" alt="平面设计作品7" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">海鲜产品海报</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_8.webp" alt="平面设计作品8" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">麻辣烫周边海报</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_9.webp" alt="平面设计作品9" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">草莓冰激凌海报</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_10.webp" alt="平面设计作品10" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">汉堡快餐海报</h3>
+                    </div>
+                </div>
+                <div class="work-card graphic-card fade-in">
+                    <img src="img/img_gd_11.webp" alt="平面设计作品11" loading="lazy">
+                    <div class="work-overlay">
+                        <h3 class="work-title">果茶饮品海报</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="show-more-container active" data-category="graphic">
+                <button class="show-more-btn">
+                    <span class="btn-text">更多作品</span>
+                    <span class="arrow-icon">▼</span>
+                </button>
+            </div>
+
+            <!-- UI作品 -->
+            <div class="works-grid collapsed" id="ui-works">
+                <div class="gradient-overlay"></div>
+                <div class="work-card ui-card fade-in">
+                    <div class="phone-mockup">
+                        <img src="img/img_UI_1.webp" alt="UI作品1" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">APPUI开屏页</h3>
+                    </div>
+                </div>
+                <div class="work-card ui-card fade-in">
+                    <div class="phone-mockup">
+                        <img src="img/img_UI_2.webp" alt="UI作品2" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">APPUI引导页</h3>
+                    </div>
+                </div>
+                <div class="work-card ui-card fade-in">
+                    <div class="phone-mockup">
+                        <img src="img/img_UI_3.webp" alt="UI作品3" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">APPUI主页面</h3>
+                    </div>
+                </div>
+                <div class="work-card ui-card fade-in">
+                    <div class="phone-mockup">
+                        <img src="img/img_UI_4.webp" alt="UI作品4" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">APPUI个人中心页面</h3>
+                    </div>
+                </div>
+                <div class="work-card ui-card fade-in">
+                    <div class="phone-mockup">
+                        <img src="img/img_UI_5.webp" alt="UI作品5" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">APPUI设置页面</h3>
+                    </div>
+                </div>
+                <div class="work-card ui-card fade-in">
+                    <div class="phone-mockup">
+                        <img src="img/img_UI_6.webp" alt="UI作品6" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">APPUI文档页面</h3>
+                    </div>
+                </div>
+                <div class="work-card ui-card fade-in">
+                    <div class="phone-mockup">
+                        <img src="img/img_UI_7.webp" alt="UI作品7" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">APPUI标签页面</h3>
+                    </div>
+                </div>
+                <div class="work-card ui-card fade-in">
+                    <div class="phone-mockup">
+                        <img src="img/img_UI_8.webp" alt="UI作品8" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">APPUI分享页面</h3>
+                    </div>
+                </div>
+                <div class="work-card ui-card fade-in">
+                    <div class="phone-mockup">
+                        <img src="img/img_UI_9.webp" alt="UI作品9" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">APPUI回收站页面</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="show-more-container" data-category="ui">
+                <button class="show-more-btn">
+                    <span class="btn-text">更多作品</span>
+                    <span class="arrow-icon">▼</span>
+                </button>
+            </div>
+
+            <!-- 网站作品 -->
+            <div class="works-grid collapsed" id="web-works">
+                <div class="gradient-overlay"></div>
+                <div class="work-card web-card fade-in">
+                    <div class="computer-mockup">
+                        <img src="img/img_wed_1.webp" alt="网站作品1" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">医疗B端用户注册</h3>
+                    </div>
+                </div>
+                <div class="work-card web-card fade-in">
+                    <div class="computer-mockup">
+                        <img src="img/img_wed_2.webp" alt="网站作品2" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">医疗B端主页</h3>
+                    </div>
+                </div>
+                <div class="work-card web-card fade-in">
+                    <div class="computer-mockup">
+                        <img src="img/img_wed_3.webp" alt="网站作品3" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">医疗B端页面</h3>
+                    </div>
+                </div>
+                <div class="work-card web-card fade-in">
+                    <div class="computer-mockup">
+                        <img src="img/img_wed_4.webp" alt="网站作品4" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">医疗B端页面</h3>
+                    </div>
+                </div>
+                <div class="work-card web-card fade-in">
+                    <div class="computer-mockup">
+                        <img src="img/img_wed_5.webp" alt="网站作品5" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">医疗B端页面</h3>
+                    </div>
+                </div>
+                <div class="work-card web-card fade-in">
+                    <div class="computer-mockup">
+                        <img src="img/img_wed_6.webp" alt="网站作品6" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">网站作品6</h3>
+                    </div>
+                </div>
+                <div class="work-card web-card fade-in">
+                    <div class="computer-mockup">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20admin%20panel&image_size=landscape_16_10" alt="网站作品8" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">管理后台设计</h3>
+                    </div>
+                </div>
+                <div class="work-card web-card fade-in">
+                    <div class="computer-mockup">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20corporate%20website&image_size=landscape_16_10" alt="网站作品9" loading="lazy">
+                    </div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">企业门户网站</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="show-more-container" data-category="web">
+                <button class="show-more-btn">
+                    <span class="btn-text">更多作品</span>
+                    <span class="arrow-icon">▼</span>
+                </button>
+            </div>
+
+            <!-- 视频作品 -->
+            <div class="works-grid collapsed" id="video-works">
+                <div class="gradient-overlay"></div>
+                <div class="work-card video-card fade-in">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20video%20thumbnail%20design&image_size=landscape_16_9" alt="视频作品1" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">品牌宣传片</h3>
+                    </div>
+                </div>
+                <div class="work-card video-card fade-in">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20video%20cover%20art&image_size=landscape_16_9" alt="视频作品2" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">产品介绍视频</h3>
+                    </div>
+                </div>
+                <div class="work-card video-card fade-in">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20motion%20graphics%20video&image_size=landscape_16_9" alt="视频作品3" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">动态图形动画</h3>
+                    </div>
+                </div>
+                <div class="work-card video-card fade-in">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20product%20video&20commercial&image_size=landscape_16_9" alt="视频作品4" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">产品广告视频</h3>
+                    </div>
+                </div>
+                <div class="work-card video-card fade-in">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20event%20video&20production&image_size=landscape_16_9" alt="视频作品5" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">活动记录视频</h3>
+                    </div>
+                </div>
+                <div class="work-card video-card fade-in">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20tutorial%20video&20design&image_size=landscape_16_9" alt="视频作品6" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">教学演示视频</h3>
+                    </div>
+                </div>
+                <div class="work-card video-card fade-in">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20brand%20story%20video&image_size=landscape_16_9" alt="视频作品7" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">品牌故事视频</h3>
+                    </div>
+                </div>
+                <div class="work-card video-card fade-in">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20intro%20video%20animation&image_size=landscape_16_9" alt="视频作品8" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">开场动画视频</h3>
+                    </div>
+                </div>
+                <div class="work-card video-card fade-in">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20showcase%20video%20production&image_size=landscape_16_9" alt="视频作品9" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="work-overlay">
+                        <h3 class="work-title">作品展示视频</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="show-more-container" data-category="video">
+                <button class="show-more-btn">
+                    <span class="btn-text">更多作品</span>
+                    <span class="arrow-icon">▼</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <h3>联系我</h3>
+                    <div class="contact-info">
+                        <span>邮箱:1648996543@qq.com</span>
+                        <span>电话:13023569118</span>
+                    </div>
+                </div>
+                <div class="footer-right">
+                    <h3>社交媒体</h3>
+                    <div class="social-links">
+                        <a href="javascript:void(0);" class="social-icon" data-social="social1"><img src="img/img_yj_app1.webp" alt="社交媒体1" loading="lazy"></a>
+                        <a href="javascript:void(0);" class="social-icon" data-social="social2"><img src="img/img_yj_app2.webp" alt="社交媒体2" loading="lazy"></a>
+                        <a href="javascript:void(0);" class="social-icon" data-social="social3"><img src="img/img_yj_app3.webp" alt="社交媒体3" loading="lazy"></a>
+                        <a href="javascript:void(0);" class="social-icon" data-social="social4"><img src="img/img_yj_app4.webp" alt="社交媒体4" loading="lazy"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2026 季佳铭. 保留所有权利.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 汉堡菜单
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+        
+        hamburger.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+
+        // 筛选标签功能 - 分类切换
+        const filterTags = document.querySelectorAll('.filter-tag');
+        const worksGrids = document.querySelectorAll('.works-grid');
+        const showMoreContainers = document.querySelectorAll('.show-more-container');
+        
+        filterTags.forEach(tag => {
+            tag.addEventListener('click', function() {
+                // 移除所有标签的active类
+                filterTags.forEach(t => t.classList.remove('active'));
+                // 添加当前标签的active类
+                this.classList.add('active');
+                
+                // 获取当前分类
+                const category = this.getAttribute('data-category');
+                
+                // 隐藏所有作品网格并重置为收起状态
+                worksGrids.forEach(grid => {
+                    grid.classList.remove('active');
+                    grid.classList.add('collapsed');
+                    // 显示所有渐变层
+                    const gradientOverlay = grid.querySelector('.gradient-overlay');
+                    if (gradientOverlay) {
+                        gradientOverlay.classList.remove('hidden');
+                    }
+                });
+                
+                // 隐藏所有更多按钮容器
+                showMoreContainers.forEach(container => {
+                    container.classList.remove('active');
+                });
+                
+                // 显示对应分类的作品网格和更多按钮
+                const targetGrid = document.getElementById(category + '-works');
+                const targetContainer = document.querySelector(`.show-more-container[data-category="${category}"]`);
+                if (targetGrid) {
+                    targetGrid.classList.add('active');
+                }
+                if (targetContainer) {
+                    targetContainer.classList.add('active');
+                    const btn = targetContainer.querySelector('.show-more-btn');
+                    const btnText = btn.querySelector('.btn-text');
+                    btnText.textContent = '更多作品';
+                    btn.classList.remove('collapsed');
+                }
+            });
+        });
+
+        // 读取URL参数并切换到对应分类
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+        if (categoryParam) {
+            const targetTag = document.querySelector(`.filter-tag[data-category="${categoryParam}"]`);
+            if (targetTag) {
+                targetTag.click();
+            }
+        }
+        
+        // 更多按钮功能
+        const showMoreButtons = document.querySelectorAll('.show-more-btn');
+        
+        showMoreButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const container = this.parentElement;
+                const category = container.getAttribute('data-category');
+                const grid = document.getElementById(category + '-works');
+                const gradientOverlay = grid.querySelector('.gradient-overlay');
+                const btnText = this.querySelector('.btn-text');
+                
+                if (grid.classList.contains('collapsed')) {
+                    // 展开
+                    grid.classList.remove('collapsed');
+                    gradientOverlay.classList.add('hidden');
+                    btnText.textContent = '收起';
+                    this.classList.add('collapsed');
+                } else {
+                    // 收起
+                    grid.classList.add('collapsed');
+                    gradientOverlay.classList.remove('hidden');
+                    btnText.textContent = '更多作品';
+                    this.classList.remove('collapsed');
+                }
+            });
+        });
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我 | AIGC创作者</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #f8f9fa;
+            --secondary-color: #e9ecef;
+            --accent-color: #6c757d;
+            --text-color: #343a40;
+            --light-text: #6c757d;
+            --border-color: #dee2e6;
+            --gradient-start: #f8f9fa;
+            --gradient-end: #e9ecef;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            padding: 20px 0;
+        }
+
+        .navbar.scrolled {
+            background: rgba(248, 249, 250, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--light-text);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        .nav-menu li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-menu li a:hover,
+        .nav-menu li a.active {
+            color: var(--accent-color);
+        }
+
+        .nav-menu li a.active {
+            background-color: var(--secondary-color);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-color);
+        }
+
+        /* Hero 区域 */
+        .hero {
+            padding: 150px 0 120px;
+            display: flex;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-image {
+            position: relative;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .hero-image .avatar {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+        }
+
+        .hero-image .avatar img {
+            width: 100%;
+            display: block;
+        }
+
+        .hero-image .glow-effect {
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(233, 69, 96, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+        }
+
+        .hero-text {
+            animation: fadeIn 1s ease-in-out 0.3s both;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--accent-color);
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .hero-description {
+            font-size: 16px;
+            color: var(--light-text);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .hero-description p {
+            margin-bottom: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-right: 16px;
+            margin-bottom: 16px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--text-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* 技能板块 */
+        .skills-section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-glow), transparent);
+            border-radius: 3px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .skill-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 60px 30px;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .skill-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .skill-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .skill-card p {
+            font-size: 13px;
+            color: var(--light-text);
+        }
+
+        .tools-section {
+            margin-top: 60px;
+        }
+
+        .tools-section h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 24px;
+        }
+
+        .tool-item {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tool-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .tool-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tool-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .tool-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .tool-level {
+            font-size: 12px;
+            color: var(--accent-color);
+            padding: 4px 12px;
+            background: var(--secondary-color);
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        /* 学习经历板块 */
+        .experience-section {
+            padding: 100px 0;
+        }
+
+        .experience-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .experience-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .experience-date {
+            font-size: 14px;
+            color: var(--accent-color);
+            font-weight: 600;
+            padding: 8px 16px;
+            background: var(--secondary-color);
+            border-radius: 8px;
+        }
+
+        .experience-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .experience-institution {
+            font-size: 14px;
+            color: var(--light-text);
+        }
+
+        .experience-content {
+            color: var(--light-text);
+            line-height: 1.8;
+        }
+
+        .experience-content p {
+            margin-bottom: 16px;
+        }
+
+        .experience-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .experience-content li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
+        }
+
+        .experience-content li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* 个人风格板块 */
+        .style-section {
+            padding: 100px 0;
+            background: white;
+        }
+
+        .style-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .style-text {
+            color: var(--light-text);
+            line-height: 1.8;
+        }
+
+        .style-text p {
+            margin-bottom: 20px;
+        }
+
+        .style-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .style-tag {
+            padding: 10px 24px;
+            background: var(--secondary-color);
+            border-radius: 30px;
+            font-size: 14px;
+            color: var(--accent-color);
+            transition: all 0.3s ease;
+        }
+
+        .style-tag:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* CTA 区域 */
+        .cta-section {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .cta-content h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .cta-content p {
+            font-size: 16px;
+            color: var(--light-text);
+            margin-bottom: 40px;
+        }
+
+        /* 页脚 */
+        .footer {
+            padding: 100px 0;
+            background-color: var(--primary-color);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .footer-left {
+            flex: 1;
+        }
+
+        .footer-right {
+            flex: 1;
+            text-align: right;
+        }
+
+        .footer-left h3,
+        .footer-right h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .contact-info span {
+            color: var(--light-text);
+            font-size: 14px;
+        }
+
+        .footer-right a {
+            color: var(--light-text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-right a:hover {
+            color: var(--accent-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+        }
+
+        .social-links a {
+            font-size: 20px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--border-color);
+            color: var(--light-text);
+            font-size: 14px;
+        }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                right: 0;
+                background: var(--primary-color);
+                flex-direction: column;
+                align-items: center;
+                padding: 30px 0;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .nav-menu.active {
+                transform: translateY(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .style-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .experience-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn {
+                display: block;
+                margin: 10px auto;
+                width: fit-content;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .experience-card,
+            .tools-section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="index.html" class="logo">
+                    AIGC创作者 <span>2026</span>
+                </a>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="detail.html">作品集</a></li>
+                    <li><a href="about.html" class="active">关于我</a></li>
+                    <li><a href="contact.html">联系方式</a></li>
+                </ul>
+                <button class="hamburger" id="hamburger">
+                    ☰
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero 区域 -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-image">
+                    <div class="glow-effect"></div>
+                    <div class="avatar">
+                        <img src="img/img_about_hero.webp" alt="职业照" loading="lazy">
+                    </div>
+                </div>
+                <div class="hero-text">
+                    <h1 class="hero-title">季佳铭</h1>
+                    <p class="hero-subtitle">AIGC 创意设计师</p>
+                    <div class="hero-description">
+                        <p>专注AIGC领域系统学习，深耕AI生成设计、Prompt工程及创意落地，具备扎实的理论基础与实操能力，擅长将AI工具与创意理念结合，打造兼具美感与实用性的作品。</p>
+                        <p>注重细节与逻辑，善于快速吸收AIGC前沿技术，主动探索AI在视觉设计、内容生成中的多元应用，秉持"技术赋能创意，创意服务需求"的理念，持续打磨作品。</p>
+                    </div>
+                    <div>
+                        <a href="detail.html" class="btn btn-primary">查看作品</a>
+                        <a href="contact.html" class="btn btn-secondary">联系我</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心技能板块 -->
+    <section class="skills-section">
+        <div class="container">
+            <h2 class="section-title">核心技能</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon"><img src="img/img_about_1.webp" alt="AI生成设计" loading="lazy"></div>
+                    <h3>AI生成设计</h3>
+                    <p>精通主流AI绘画工具，擅长通过Prompt工程生成高质量视觉作品</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon"><img src="img/img_about_2.webp" alt="Prompt工程" loading="lazy"></div>
+                    <h3>Prompt工程</h3>
+                    <p>深入理解Prompt原理，能够精准构建指令，控制AI生成方向</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon"><img src="img/img_about_3.webp" alt="创意落地" loading="lazy"></div>
+                    <h3>创意落地</h3>
+                    <p>将创意理念转化为可执行方案，兼顾创新性与实用性</p>
+                </div>
+            </div>
+
+            <!-- 工具栈 -->
+            <div class="tools-section">
+                <h3>工具栈</h3>
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <div class="tool-icon"><img src="img/img_about_4.webp" alt="Figma" loading="lazy"></div>
+                        <div class="tool-name">Figma</div>
+                        <div class="tool-level">熟练掌握</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-icon"><img src="img/img_about_5.webp" alt="即梦" loading="lazy"></div>
+                        <div class="tool-name">即梦</div>
+                        <div class="tool-level">熟练掌握</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-icon"><img src="img/img_about_6.webp" alt="豆包" loading="lazy"></div>
+                        <div class="tool-name">豆包</div>
+                        <div class="tool-level">熟练掌握</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-icon"><img src="img/img_about_7.webp" alt="PS" loading="lazy"></div>
+                        <div class="tool-name">PS</div>
+                        <div class="tool-level">掌握</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-icon"><img src="img/img_about_8.webp" alt="剪映" loading="lazy"></div>
+                        <div class="tool-name">剪映</div>
+                        <div class="tool-level">掌握</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 学习经历板块 -->
+    <section class="experience-section">
+        <div class="container">
+            <h2 class="section-title">学习经历</h2>
+            <div class="experience-card">
+                <div class="experience-header">
+                    <span class="experience-date">2026.03 - 2026.06</span>
+                    <div>
+                        <h3 class="experience-title">AIGC专项学习班</h3>
+                        <p class="experience-institution">系统学习AI生成设计</p>
+                    </div>
+                </div>
+                <div class="experience-content">
+                    <p>系统学习AI生成设计、Prompt工程、作品优化等核心内容，完成2组AIGC主题作品（含AI绘画、创意内容生成），熟练掌握主流AIGC工具实操，具备独立完成从创意构思到作品落地的全流程能力，参与班级AIGC创意项目，积累了团队协作与作品打磨经验。</p>
+                    <ul>
+                        <li>AI生成设计理论与实践</li>
+                        <li>Prompt工程进阶技巧</li>
+                        <li>作品优化与风格把控</li>
+                        <li>团队创意项目协作</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 个人风格板块 -->
+    <section class="style-section">
+        <div class="container">
+            <h2 class="section-title">创作理念与风格</h2>
+            <div class="style-content">
+                <div class="style-text">
+                    <p>创意上，擅长结合热点与实用需求，打造有温度、有记忆点的AIGC作品，兼顾创新性与实用性；风格上，偏好简约高级、色彩协调的视觉呈现，注重细节打磨与逻辑闭环。</p>
+                    <p>创作中，善于倾听需求，灵活调整Prompt与生成参数，兼顾AI工具的高效性与创意的独特性，拒绝同质化，追求每一份作品都能传递清晰的创作理念。</p>
+                </div>
+                <div>
+                    <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 24px;">设计关键词</h3>
+                    <div class="style-tags">
+                        <span class="style-tag">简约高级</span>
+                        <span class="style-tag">色彩协调</span>
+                        <span class="style-tag">细节打磨</span>
+                        <span class="style-tag">逻辑闭环</span>
+                        <span class="style-tag">创新实用</span>
+                        <span class="style-tag">技术赋能</span>
+                        <span class="style-tag">拒绝同质</span>
+                        <span class="style-tag">清晰表达</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA 区域 -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>期待与您合作</h2>
+                <p>如果您有创意需求或合作意向，欢迎与我联系</p>
+                <div>
+                    <a href="detail.html" class="btn btn-primary">查看作品</a>
+                    <a href="contact.html" class="btn btn-secondary">联系我</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <h3>联系我</h3>
+                    <div class="contact-info">
+                        <span>邮箱：1648996543@qq.com</span>
+                        <span>电话：13023569118</span>
+                    </div>
+                </div>
+                <div class="footer-right">
+                    <h3>社交媒体</h3>
+                    <div class="social-links">
+                        <a href="javascript:void(0);" class="social-icon" data-social="social1"><img src="img/img_yj_app1.webp" alt="社交媒体1" loading="lazy"></a>
+                        <a href="javascript:void(0);" class="social-icon" data-social="social2"><img src="img/img_yj_app2.webp" alt="社交媒体2" loading="lazy"></a>
+                        <a href="javascript:void(0);" class="social-icon" data-social="social3"><img src="img/img_yj_app3.webp" alt="社交媒体3" loading="lazy"></a>
+                        <a href="javascript:void(0);" class="social-icon" data-social="social4"><img src="img/img_yj_app4.webp" alt="社交媒体4" loading="lazy"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2026 季佳铭. 保留所有权利.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 汉堡菜单
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    navMenu.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
